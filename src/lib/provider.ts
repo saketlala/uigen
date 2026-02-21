@@ -282,31 +282,156 @@ const ContactForm = () => {
 export default ContactForm;`;
 
       case "card":
-        return `import React from 'react';
+        return `import React, { useState } from 'react';
 
-const Card = ({ 
-  title = "Welcome to Our Service", 
-  description = "Discover amazing features and capabilities that will transform your experience.",
-  imageUrl,
-  actions 
+const features = [
+  { icon: '⚡', label: 'Lightning Fast', desc: '10x faster performance' },
+  { icon: '🔒', label: 'Secure', desc: 'Enterprise-grade security' },
+  { icon: '🌍', label: 'Global CDN', desc: '99.99% uptime SLA' },
+];
+
+const plans = ['Starter', 'Pro', 'Enterprise'];
+
+const avatars = ['🧑‍💻', '👩‍🎨', '🧑‍🚀', '👨‍🔬'];
+
+const Card = ({
+  title = "Premium Experience",
+  description = "Discover amazing features and capabilities that will transform your workflow forever.",
 }) => {
+  const [liked, setLiked] = useState(false);
+  const [likeCount, setLikeCount] = useState(42);
+  const [selectedPlan, setSelectedPlan] = useState('Pro');
+  const [added, setAdded] = useState(false);
+  const [activeTab, setActiveTab] = useState('overview');
+
+  const handleLike = () => {
+    setLiked(!liked);
+    setLikeCount(c => liked ? c - 1 : c + 1);
+  };
+
+  const handleAdd = () => {
+    setAdded(true);
+    setTimeout(() => setAdded(false), 2000);
+  };
+
   return (
-    <div className="bg-white rounded-lg shadow-md overflow-hidden">
-      {imageUrl && (
-        <img 
-          src={imageUrl} 
-          alt={title}
-          className="w-full h-48 object-cover"
-        />
-      )}
-      <div className="p-6">
-        <h3 className="text-xl font-semibold mb-2">{title}</h3>
-        <p className="text-gray-600 mb-4">{description}</p>
-        {actions && (
-          <div className="mt-4">
-            {actions}
+    <div className="bg-white rounded-3xl shadow-2xl overflow-hidden max-w-sm w-full" style={{ fontFamily: 'system-ui, sans-serif' }}>
+
+      {/* Hero */}
+      <div className="relative h-44 bg-gradient-to-br from-violet-600 via-purple-600 to-indigo-700 overflow-hidden">
+        {/* Blobs */}
+        <div className="absolute -top-6 -right-6 w-32 h-32 rounded-full bg-white opacity-10" />
+        <div className="absolute bottom-0 -left-8 w-40 h-40 rounded-full bg-indigo-400 opacity-20" />
+        <div className="absolute top-8 left-1/2 w-24 h-24 rounded-full bg-purple-300 opacity-10" />
+
+        {/* Top row */}
+        <div className="absolute top-4 left-4 right-4 flex justify-between items-center">
+          <span className="bg-amber-400 text-amber-900 text-xs font-bold px-3 py-1 rounded-full">✦ PRO</span>
+          <button
+            onClick={handleLike}
+            className="flex items-center gap-1.5 bg-white/20 backdrop-blur-sm text-white text-xs font-semibold px-3 py-1.5 rounded-full border border-white/30 hover:bg-white/30 transition-all"
+          >
+            <span style={{ transition: 'transform 0.2s', transform: liked ? 'scale(1.3)' : 'scale(1)', color: liked ? '#f87171' : 'white' }}>♥</span>
+            {likeCount}
+          </button>
+        </div>
+
+        {/* Title in hero */}
+        <div className="absolute bottom-5 left-5 right-5">
+          <h2 className="text-white text-xl font-bold leading-tight">{title}</h2>
+          <div className="flex items-center gap-1 mt-1">
+            {'★★★★★'.split('').map((s, i) => (
+              <span key={i} className="text-amber-300 text-xs">{s}</span>
+            ))}
+            <span className="text-white/70 text-xs ml-1">4.9 · 2.4k reviews</span>
+          </div>
+        </div>
+      </div>
+
+      {/* Tabs */}
+      <div className="flex border-b border-gray-100 px-4">
+        {['overview', 'features', 'team'].map(tab => (
+          <button
+            key={tab}
+            onClick={() => setActiveTab(tab)}
+            className={\`flex-1 py-3 text-xs font-semibold capitalize transition-all \${activeTab === tab ? 'text-violet-600 border-b-2 border-violet-600' : 'text-gray-400 hover:text-gray-600'}\`}
+          >
+            {tab}
+          </button>
+        ))}
+      </div>
+
+      {/* Tab content */}
+      <div className="px-5 pt-4 pb-2 min-h-28">
+        {activeTab === 'overview' && (
+          <p className="text-sm text-gray-500 leading-relaxed">{description}</p>
+        )}
+        {activeTab === 'features' && (
+          <div className="space-y-3">
+            {features.map(f => (
+              <div key={f.label} className="flex items-center gap-3">
+                <div className="w-8 h-8 rounded-xl bg-violet-50 flex items-center justify-center text-base">{f.icon}</div>
+                <div>
+                  <div className="text-xs font-semibold text-gray-800">{f.label}</div>
+                  <div className="text-xs text-gray-400">{f.desc}</div>
+                </div>
+              </div>
+            ))}
           </div>
         )}
+        {activeTab === 'team' && (
+          <div>
+            <div className="flex -space-x-2 mb-2">
+              {avatars.map((a, i) => (
+                <div key={i} className="w-9 h-9 rounded-full bg-gradient-to-br from-violet-400 to-indigo-500 flex items-center justify-center text-base border-2 border-white">{a}</div>
+              ))}
+              <div className="w-9 h-9 rounded-full bg-gray-100 flex items-center justify-center text-xs font-bold text-gray-500 border-2 border-white">+18</div>
+            </div>
+            <p className="text-xs text-gray-400">22 contributors · Last active 2h ago</p>
+          </div>
+        )}
+      </div>
+
+      {/* Stats */}
+      <div className="grid grid-cols-3 gap-px bg-gray-100 mx-5 my-3 rounded-2xl overflow-hidden">
+        {[['12k', 'Users'], ['98%', 'Uptime'], ['4.9★', 'Rating']].map(([val, label]) => (
+          <div key={label} className="bg-white py-3 text-center">
+            <div className="text-sm font-bold text-gray-800">{val}</div>
+            <div className="text-xs text-gray-400">{label}</div>
+          </div>
+        ))}
+      </div>
+
+      {/* Plan selector */}
+      <div className="px-5 mb-4">
+        <div className="flex gap-2">
+          {plans.map(p => (
+            <button
+              key={p}
+              onClick={() => setSelectedPlan(p)}
+              className={\`flex-1 py-1.5 text-xs font-semibold rounded-lg transition-all \${selectedPlan === p ? 'bg-violet-600 text-white shadow-md' : 'bg-gray-100 text-gray-500 hover:bg-gray-200'}\`}
+            >
+              {p}
+            </button>
+          ))}
+        </div>
+      </div>
+
+      {/* Pricing + CTA */}
+      <div className="px-5 pb-5 flex items-center gap-3">
+        <div>
+          <div className="text-2xl font-extrabold text-gray-900">
+            {selectedPlan === 'Starter' ? '$9' : selectedPlan === 'Pro' ? '$29' : '$99'}
+            <span className="text-sm font-normal text-gray-400">/mo</span>
+          </div>
+          <div className="text-xs text-gray-400">Billed annually</div>
+        </div>
+        <button
+          onClick={handleAdd}
+          className={\`flex-1 py-3 rounded-2xl text-sm font-bold transition-all duration-300 \${added ? 'bg-green-500 text-white' : 'bg-gradient-to-r from-violet-600 to-indigo-600 text-white hover:opacity-90 active:scale-95'}\`}
+        >
+          {added ? '✓ Added!' : 'Get Started →'}
+        </button>
       </div>
     </div>
   );
